@@ -325,7 +325,7 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={() => openRecent(item)}
-                    className="w-full rounded-xl border border-[var(--border)] bg-[rgba(20,8,36,0.55)] px-5 py-4 text-left transition hover:border-[var(--border-purple)]"
+                    className="ui-recent w-full rounded-xl px-5 py-4 text-left"
                   >
                     <p className="text-base text-[var(--text)]">{item.title}</p>
                     <p className="mt-1 text-sm lowercase text-[var(--text-muted)]">
