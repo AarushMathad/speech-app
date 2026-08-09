@@ -206,7 +206,8 @@ export default function Home() {
                   custom topic
                 </h2>
                 <p className="mb-4 text-base text-[var(--text-muted)] lowercase">
-                  educational topics go technical for undergrads who already know the basics; everything else gets a sharp angle.
+                  educational topics lean into current findings; everything else
+                  gets an interesting angle.
                 </p>
                 <div className="flex flex-col gap-3 sm:flex-row">
                   <input

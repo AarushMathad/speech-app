@@ -119,12 +119,15 @@ Structure:
 Speakability:
 - Write ONLY the words to be spoken. No stage directions, labels, bullets, or markdown headings.
 - Prefer short-to-medium sentences. Complexity lives in the ideas, not tangled grammar.
+- Sound like natural spoken English: complete clauses, clear referents, no telegram fragments.
+- When you quote a phrase, term, or title, keep both opening and closing quotation marks in the spoken text (or rephrase without quotes). Never leave a quote hanging.
+- Avoid awkward punctuation, run-ons, or half-edited sentences. The script must read cleanly out loud on the first pass.
 - Use real technical terms when they help. Briefly gloss only jargon that a strong undergrad might not know yet — do not over-explain basics.
 - Target 350–450 words (about 2.5–3 minutes).
 
 For educational / technical topics: prioritize a specific non-obvious insight, current technique, or real tradeoff. Avoid "what is X" intros.
 
-Return a JSON object with keys title, topic, and script. The script value must be plain spoken text.`;
+Return a JSON object with keys title, topic, and script. The script value must be plain spoken text with correct grammar and punctuation.`;
 }
 
 export function buildDailyUserPrompt(params: {
