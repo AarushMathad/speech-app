@@ -128,7 +128,10 @@ Speakability (this is a speech exercise first):
 
 For educational / technical topics: prioritize a specific non-obvious insight, current technique, or real tradeoff. Avoid "what is X" intros. Advanced ideas, conversational delivery.
 
-Return a JSON object with keys title, topic, and script. The script value must be plain spoken text with correct grammar and punctuation.`;
+Return a JSON object with keys title, topic, and script.
+- title: short and punchy
+- topic: one short punchy clause (about 6–14 words). No long explanations, no "why X causes Y by doing Z" essays — just the angle in plain words
+- script: plain spoken text with correct grammar and punctuation`;
 }
 
 export function buildDailyUserPrompt(params: {
@@ -169,7 +172,7 @@ ${
 }
 JSON fields:
 - title: short compelling title
-- topic: one-line description of the invented angle
+- topic: short punchy angle only (6–14 words max) — not a full summary sentence
 - script: full spoken text only`;
 }
 
@@ -207,7 +210,7 @@ ${excluded}
 
 JSON fields:
 - title: short compelling title
-- topic: one-line description of the specific angle you chose
+- topic: short punchy angle only (6–14 words max) — not a full summary sentence
 - script: full spoken text only`;
 }
 
