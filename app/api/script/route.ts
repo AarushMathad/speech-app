@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 import {
   buildSystemPrompt,
@@ -94,8 +94,17 @@ export async function POST(req: Request) {
     systemInstruction: buildSystemPrompt(),
     generationConfig: {
       temperature: 0.9,
-      maxOutputTokens: 2048,
+      maxOutputTokens: 8192,
       responseMimeType: "application/json",
+      responseSchema: {
+        type: SchemaType.OBJECT,
+        properties: {
+          title: { type: SchemaType.STRING },
+          topic: { type: SchemaType.STRING },
+          script: { type: SchemaType.STRING },
+        },
+        required: ["title", "topic", "script"],
+      },
     },
   });
 

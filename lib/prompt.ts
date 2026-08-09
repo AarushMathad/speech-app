@@ -31,8 +31,7 @@ Speakability rules:
 
 For educational topics: teach something current and specific — what is popping now — not a vague survey. One idea, clearly spoken.
 
-Return valid JSON only, no markdown fences, matching:
-{"title":"string","topic":"string","script":"string"}`;
+Return a JSON object with keys title, topic, and script. The script value must be plain spoken text.`;
 }
 
 export function buildUserPrompt(params: {
@@ -87,12 +86,24 @@ export function parseScriptJson(raw: string): {
     .replace(/^```(?:json)?\s*/i, "")
     .replace(/\s*```$/i, "");
 
-  const parsed = JSON.parse(cleaned) as {
-    title?: unknown;
-    topic?: unknown;
-    script?: unknown;
-  };
+  try {
+    return validateParsed(JSON.parse(cleaned));
+  } catch {
+    const title = extractJsonStringField(cleaned, "title");
+    const topic = extractJsonStringField(cleaned, "topic");
+    const script = extractJsonStringField(cleaned, "script");
+    if (title && topic && script) {
+      return { title, topic, script };
+    }
+    throw new Error("Could not parse script JSON from the model. Try again.");
+  }
+}
 
+function validateParsed(parsed: {
+  title?: unknown;
+  topic?: unknown;
+  script?: unknown;
+}): { title: string; topic: string; script: string } {
   if (
     typeof parsed.title !== "string" ||
     typeof parsed.topic !== "string" ||
@@ -106,4 +117,43 @@ export function parseScriptJson(raw: string): {
     topic: parsed.topic.trim(),
     script: parsed.script.trim(),
   };
+}
+
+/** Extract a JSON string field even when later fields are truncated. */
+function extractJsonStringField(raw: string, key: string): string | null {
+  const marker = `"${key}"`;
+  const keyIndex = raw.indexOf(marker);
+  if (keyIndex === -1) return null;
+
+  let i = keyIndex + marker.length;
+  while (i < raw.length && /[\s:]/.test(raw[i]!)) i++;
+  if (raw[i] !== '"') return null;
+  i++;
+
+  let out = "";
+  while (i < raw.length) {
+    const ch = raw[i]!;
+    if (ch === "\\") {
+      const next = raw[i + 1];
+      if (next == null) break;
+      const escapes: Record<string, string> = {
+        n: "\n",
+        r: "\r",
+        t: "\t",
+        '"': '"',
+        "\\": "\\",
+        "/": "/",
+      };
+      out += escapes[next] ?? next;
+      i += 2;
+      continue;
+    }
+    if (ch === '"') {
+      return out.trim();
+    }
+    out += ch;
+    i++;
+  }
+
+  return out.trim().length > 40 ? out.trim() : null;
 }

@@ -164,11 +164,17 @@ export default function Home() {
           ) : error && !script ? (
             <div className="py-12 text-center">
               <p className="text-[var(--purple-soft)]">{error}</p>
-              <p className="mt-3 text-sm text-[var(--text-muted)]">
-                Add <code className="text-[var(--text)]">GEMINI_API_KEY</code>{" "}
-                to <code className="text-[var(--text)]">.env.local</code> and
-                refresh.
-              </p>
+              {error.includes("GEMINI_API_KEY") ? (
+                <p className="mt-3 text-sm text-[var(--text-muted)]">
+                  Add <code className="text-[var(--text)]">GEMINI_API_KEY</code>{" "}
+                  in Vercel env vars (or <code className="text-[var(--text)]">.env.local</code>{" "}
+                  locally), then redeploy / refresh.
+                </p>
+              ) : (
+                <p className="mt-3 text-sm text-[var(--text-muted)]">
+                  Hit refresh or try again in a moment.
+                </p>
+              )}
             </div>
           ) : script ? (
             <>
