@@ -15,9 +15,9 @@ const sourceSerif = Source_Serif_4({
 });
 
 export const metadata: Metadata = {
-  title: "Daily Speak",
+  title: "Speech practice",
   description:
-    "A daily conversational speech script — educational, reflective, and ready to read aloud.",
+    "A daily 2–3 minute script on live-generated topics for speaking out loud.",
 };
 
 export default function RootLayout({
