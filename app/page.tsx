@@ -11,9 +11,9 @@ import type { ScriptPayload } from "@/lib/prompt";
 import { todayDateString } from "@/lib/topics";
 
 const CATEGORY_LABEL: Record<string, string> = {
-  educational: "fintech · ai · ml",
-  reflective: "mind · relationships",
-  hobbies: "hobbies · culture",
+  educational: "tech · ai · science · markets",
+  reflective: "mind · philosophy · people",
+  hobbies: "culture · music · events",
   custom: "custom topic",
 };
 

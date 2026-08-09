@@ -185,7 +185,7 @@ First, silently decide which lane this topic fits:
 A) Educational / technical / fintech / AI / ML / markets / science-of-X
    → Find a timely, specific angle: new findings, current debates, mechanisms that matter now, or a non-obvious recent development. Teach one concrete idea — same energy as a sharp fintech/AI explain piece. Not a vague survey.
 
-B) Everything else (relationships, philosophy, hobbies, culture, sports, craft, etc.)
+B) Everything else (interpersonal philosophy, culture, music, current events, craft, etc.)
    → Find an interesting, non-obvious angle inside the topic. Dig past the surface take people already know.
 
 Then write the spoken script for that angle.
