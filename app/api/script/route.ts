@@ -1,11 +1,13 @@
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 import {
+  buildCustomUserPrompt,
+  buildDailyUserPrompt,
   buildSystemPrompt,
-  buildUserPrompt,
   countWords,
   estimateMinutes,
   parseScriptJson,
+  pickVoiceStyle,
   type ScriptPayload,
 } from "@/lib/prompt";
 import { pickCategory, sampleSeedHints } from "@/lib/topics";
@@ -18,6 +20,7 @@ type Body = {
   excludeTopics?: string[];
   forceNew?: boolean;
   attempt?: number;
+  customTopic?: string;
 };
 
 const RATE_WINDOW_MS = 60_000;
@@ -85,16 +88,31 @@ export async function POST(req: Request) {
       ? Math.min(Math.floor(body.attempt), 50)
       : excludeTopics.length;
 
-  const category = pickCategory(date, attempt);
-  const seedHints = sampleSeedHints(category, date, attempt);
-  const modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash";
+  const customTopic =
+    typeof body.customTopic === "string" ? body.customTopic.trim().slice(0, 240) : "";
+  const isCustom = customTopic.length > 0;
 
+  if (isCustom && customTopic.length < 2) {
+    return NextResponse.json({ error: "Topic is too short." }, { status: 400 });
+  }
+
+  const category = isCustom ? null : pickCategory(date, attempt);
+  const categoryId = isCustom ? "custom" : category!.id;
+  const seedHints = category ? sampleSeedHints(category, date, attempt) : [];
+  const voice = pickVoiceStyle({
+    date,
+    attempt,
+    categoryId,
+    customTopic: isCustom ? customTopic : undefined,
+  });
+
+  const modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash";
   const client = new GoogleGenerativeAI(apiKey);
   const model = client.getGenerativeModel({
     model: modelName,
-    systemInstruction: buildSystemPrompt(),
+    systemInstruction: buildSystemPrompt(voice),
     generationConfig: {
-      temperature: 0.9,
+      temperature: 0.85,
       maxOutputTokens: 8192,
       responseMimeType: "application/json",
       responseSchema: {
@@ -109,16 +127,25 @@ export async function POST(req: Request) {
     },
   });
 
-  try {
-    const result = await model.generateContent(
-      buildUserPrompt({
-        category,
+  const userPrompt = isCustom
+    ? buildCustomUserPrompt({
+        customTopic,
+        date,
+        attempt,
+        voice,
+        excludeTopics,
+      })
+    : buildDailyUserPrompt({
+        category: category!,
         date,
         excludeTopics,
         attempt,
         seedHints,
-      }),
-    );
+        voice,
+      });
+
+  try {
+    const result = await model.generateContent(userPrompt);
     const text = result.response.text();
     if (!text?.trim()) {
       throw new Error("No text in Gemini response");
@@ -129,7 +156,7 @@ export async function POST(req: Request) {
     const payload: ScriptPayload = {
       title: parsed.title,
       topic: parsed.topic,
-      category: category.id,
+      category: categoryId,
       script: parsed.script,
       estimatedMinutes: estimateMinutes(wordCount),
       wordCount,

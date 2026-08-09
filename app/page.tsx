@@ -14,12 +14,14 @@ const CATEGORY_LABEL: Record<string, string> = {
   educational: "Fintech · AI · ML",
   reflective: "Mind · Relationships",
   hobbies: "Hobbies · Culture",
+  custom: "Custom topic",
 };
 
 async function fetchScript(params: {
   date: string;
   excludeTopics: string[];
   attempt: number;
+  customTopic?: string;
 }): Promise<ScriptPayload> {
   const res = await fetch("/api/script", {
     method: "POST",
@@ -29,6 +31,7 @@ async function fetchScript(params: {
       excludeTopics: params.excludeTopics,
       forceNew: params.attempt > 0,
       attempt: params.attempt,
+      customTopic: params.customTopic,
     }),
   });
 
@@ -46,74 +49,48 @@ export default function Home() {
   const [recent, setRecent] = useState<Array<ScriptPayload & { date: string }>>(
     [],
   );
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [attempt, setAttempt] = useState(0);
+  const [customTopic, setCustomTopic] = useState("");
+  const [mode, setMode] = useState<"daily" | "custom" | null>(null);
 
-  const persist = useCallback((day: string, current: ScriptPayload, hist: ScriptPayload[]) => {
-    const cache: DayCache = { date: day, current, history: hist };
-    saveDayCache(cache);
-    setRecent(loadRecentHistory());
-  }, []);
+  const persist = useCallback(
+    (day: string, current: ScriptPayload, hist: ScriptPayload[]) => {
+      const cache: DayCache = { date: day, current, history: hist };
+      saveDayCache(cache);
+      setRecent(loadRecentHistory());
+    },
+    [],
+  );
 
   useEffect(() => {
     const d = todayDateString();
     setDate(d);
-
     const cached = loadDayCache(d);
     setRecent(loadRecentHistory());
-
     if (cached?.current) {
       setScript(cached.current);
       setHistory(cached.history?.length ? cached.history : [cached.current]);
       setAttempt(cached.history?.length ? cached.history.length - 1 : 0);
-      setLoading(false);
-      return;
+      setMode(cached.current.category === "custom" ? "custom" : "daily");
     }
+  }, []);
 
-    let cancelled = false;
-    (async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const generated = await fetchScript({
-          date: d,
-          excludeTopics: [],
-          attempt: 0,
-        });
-        if (cancelled) return;
-        setScript(generated);
-        setHistory([generated]);
-        setAttempt(0);
-        persist(d, generated, [generated]);
-      } catch (e) {
-        if (!cancelled) {
-          setError(e instanceof Error ? e.message : "Something went wrong");
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [persist]);
-
-  async function onAnotherTopic() {
+  async function generateDaily(nextAttempt = 0, exclude: string[] = []) {
     if (!date || loading) return;
-    const exclude = history.map((h) => h.topic).filter(Boolean);
-    const nextAttempt = attempt + 1;
     try {
       setLoading(true);
       setError(null);
+      setMode("daily");
       const generated = await fetchScript({
         date,
         excludeTopics: exclude,
         attempt: nextAttempt,
       });
-      const nextHistory = [...history, generated];
+      const nextHistory =
+        nextAttempt === 0 ? [generated] : [...history, generated];
       setScript(generated);
       setHistory(nextHistory);
       setAttempt(nextAttempt);
@@ -125,11 +102,57 @@ export default function Home() {
     }
   }
 
+  async function generateCustom() {
+    if (!date || loading) return;
+    const topic = customTopic.trim();
+    if (topic.length < 2) {
+      setError("Enter a topic first.");
+      return;
+    }
+    try {
+      setLoading(true);
+      setError(null);
+      setMode("custom");
+      const generated = await fetchScript({
+        date,
+        excludeTopics: history
+          .filter((h) => h.category === "custom")
+          .map((h) => h.topic),
+        attempt: 0,
+        customTopic: topic,
+      });
+      const nextHistory = [...history, generated];
+      setScript(generated);
+      setHistory(nextHistory);
+      setAttempt(0);
+      persist(date, generated, nextHistory);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function onAnotherTopic() {
+    if (mode === "custom") {
+      await generateCustom();
+      return;
+    }
+    const exclude = history.map((h) => h.topic).filter(Boolean);
+    await generateDaily(attempt + 1, exclude);
+  }
+
   async function onCopy() {
     if (!script) return;
     await navigator.clipboard.writeText(script.script);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1600);
+  }
+
+  function onNewChoice() {
+    setScript(null);
+    setError(null);
+    setMode(null);
   }
 
   return (
@@ -144,7 +167,7 @@ export default function Home() {
             Daily Speak
           </h1>
           <p className="mx-auto mt-3 max-w-md text-sm text-[var(--text-muted)] sm:text-base">
-            One rough script a day — speak it out loud for a few minutes.
+            A rough script to speak out loud — today&apos;s pick or your own topic.
           </p>
           {date ? (
             <p className="mt-4 text-xs tracking-wide text-[var(--text-muted)]">
@@ -154,29 +177,79 @@ export default function Home() {
         </header>
 
         <section className="glass-panel glow-pulse fade-rise rounded-3xl p-6 sm:p-9">
+          {!script && !loading ? (
+            <div className="flex flex-col gap-8">
+              <div>
+                <h2 className="mb-2 text-lg font-semibold text-[var(--text)]">
+                  Today&apos;s script
+                </h2>
+                <p className="mb-4 text-sm text-[var(--text-muted)]">
+                  Weighted surprise topic across fintech/AI, mind & relationships,
+                  and hobbies.
+                </p>
+                <button
+                  type="button"
+                  className="neo-btn rounded-2xl px-5 py-3 text-sm font-medium"
+                  onClick={() => generateDaily(0, [])}
+                  disabled={loading}
+                >
+                  Generate today&apos;s script
+                </button>
+              </div>
+
+              <div className="flex items-center gap-3 text-xs tracking-[0.2em] text-[var(--text-muted)] uppercase">
+                <span className="h-px flex-1 bg-[var(--border)]" />
+                or
+                <span className="h-px flex-1 bg-[var(--border)]" />
+              </div>
+
+              <div>
+                <h2 className="mb-2 text-lg font-semibold text-[var(--text)]">
+                  Custom topic
+                </h2>
+                <p className="mb-4 text-sm text-[var(--text-muted)]">
+                  Educational topics lean into current findings; everything else
+                  gets an interesting angle.
+                </p>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <input
+                    type="text"
+                    value={customTopic}
+                    onChange={(e) => setCustomTopic(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") void generateCustom();
+                    }}
+                    placeholder="e.g. AI agents in trading ops"
+                    className="neo-input min-w-0 flex-1 rounded-2xl px-4 py-3 text-sm"
+                    maxLength={240}
+                  />
+                  <button
+                    type="button"
+                    className="neo-btn-ghost shrink-0 rounded-2xl px-5 py-3 text-sm font-medium"
+                    onClick={() => void generateCustom()}
+                    disabled={loading}
+                  >
+                    Generate
+                  </button>
+                </div>
+              </div>
+
+              {error ? (
+                <p className="text-sm text-[var(--purple-soft)]">{error}</p>
+              ) : null}
+            </div>
+          ) : null}
+
           {loading && !script ? (
             <div className="flex flex-col items-center gap-4 py-16">
               <div className="h-10 w-10 animate-pulse rounded-full bg-[rgba(124,58,237,0.35)] shadow-[0_0_30px_var(--purple-glow)]" />
               <p className="text-sm text-[var(--text-muted)]">
-                Writing today&apos;s script…
+                Writing script…
               </p>
             </div>
-          ) : error && !script ? (
-            <div className="py-12 text-center">
-              <p className="text-[var(--purple-soft)]">{error}</p>
-              {error.includes("GEMINI_API_KEY") ? (
-                <p className="mt-3 text-sm text-[var(--text-muted)]">
-                  Add <code className="text-[var(--text)]">GEMINI_API_KEY</code>{" "}
-                  in Vercel env vars (or <code className="text-[var(--text)]">.env.local</code>{" "}
-                  locally), then redeploy / refresh.
-                </p>
-              ) : (
-                <p className="mt-3 text-sm text-[var(--text-muted)]">
-                  Hit refresh or try again in a moment.
-                </p>
-              )}
-            </div>
-          ) : script ? (
+          ) : null}
+
+          {script ? (
             <>
               <div className="mb-5 flex flex-wrap items-center gap-2">
                 <span className="neo-chip rounded-full px-3 py-1 text-xs font-medium tracking-wide">
@@ -212,17 +285,29 @@ export default function Home() {
                 <button
                   type="button"
                   className="neo-btn-ghost rounded-2xl px-5 py-2.5 text-sm font-medium"
-                  onClick={onAnotherTopic}
+                  onClick={() => void onAnotherTopic()}
                   disabled={loading}
                 >
-                  {loading ? "Generating…" : "Try another topic"}
+                  {loading
+                    ? "Generating…"
+                    : mode === "custom"
+                      ? "Regenerate angle"
+                      : "Try another topic"}
+                </button>
+                <button
+                  type="button"
+                  className="neo-btn-ghost rounded-2xl px-5 py-2.5 text-sm font-medium"
+                  onClick={onNewChoice}
+                  disabled={loading}
+                >
+                  New script
                 </button>
               </div>
             </>
           ) : null}
         </section>
 
-        {recent.length > 1 ? (
+        {recent.length > 0 ? (
           <section className="fade-rise mt-10">
             <h3 className="mb-4 text-xs font-medium tracking-[0.2em] text-[var(--text-muted)] uppercase">
               Recent
@@ -237,7 +322,8 @@ export default function Home() {
                     {item.title}
                   </p>
                   <p className="mt-1 text-xs text-[var(--text-muted)]">
-                    {item.date} · {CATEGORY_LABEL[item.category] ?? item.category}
+                    {item.date} ·{" "}
+                    {CATEGORY_LABEL[item.category] ?? item.category}
                   </p>
                 </li>
               ))}
