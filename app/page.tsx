@@ -68,14 +68,7 @@ export default function Home() {
   useEffect(() => {
     const d = todayDateString();
     setDate(d);
-    const cached = loadDayCache(d);
     setRecent(loadRecentHistory());
-    if (cached?.current) {
-      setScript(cached.current);
-      setHistory(cached.history?.length ? cached.history : [cached.current]);
-      setAttempt(cached.history?.length ? cached.history.length - 1 : 0);
-      setMode(cached.current.category === "custom" ? "custom" : "daily");
-    }
   }, []);
 
   async function generateDaily(nextAttempt = 0, exclude: string[] = []) {
