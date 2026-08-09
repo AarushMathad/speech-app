@@ -47,6 +47,20 @@ function rateLimited(ip: string): boolean {
   return false;
 }
 
+function getGeminiApiKey(): string | undefined {
+  // Bracket access avoids build-time inlining of empty Sensitive env vars on Vercel.
+  const key =
+    process.env["GEMINI_API_KEY"] ||
+    process.env["speechappfreekey"] ||
+    "";
+  const trimmed = key.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
+function getGeminiModel(): string {
+  return process.env["GEMINI_MODEL"]?.trim() || "gemini-3.5-flash";
+}
+
 export async function POST(req: Request) {
   if (rateLimited(clientIp(req))) {
     return NextResponse.json(
@@ -55,10 +69,13 @@ export async function POST(req: Request) {
     );
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = getGeminiApiKey();
   if (!apiKey) {
     return NextResponse.json(
-      { error: "GEMINI_API_KEY is not configured." },
+      {
+        error:
+          "GEMINI_API_KEY is not configured on the server. Set it in Vercel Project Settings → Environment Variables, then redeploy.",
+      },
       { status: 500 },
     );
   }
@@ -106,7 +123,7 @@ export async function POST(req: Request) {
     customTopic: isCustom ? customTopic : undefined,
   });
 
-  const modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash";
+  const modelName = getGeminiModel();
   const client = new GoogleGenerativeAI(apiKey);
   const model = client.getGenerativeModel({
     model: modelName,
