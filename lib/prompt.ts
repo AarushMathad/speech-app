@@ -26,28 +26,28 @@ export type VoiceStyle = {
  */
 export const VOICE_STYLES: VoiceStyle[] = [
   {
-    id: "nuanced-clear",
-    label: "Nuanced · clear",
-    weight: 28,
-    prefer: [],
-    instruction:
-      "Thoughtful and precise. Layer the idea a bit — tradeoffs, tension, or a non-obvious turn — without sounding academic or stiff. Natural spoken rhythm, not slangy.",
-  },
-  {
     id: "sharp-analytical",
     label: "Sharp · analytical",
-    weight: 22,
+    weight: 30,
     prefer: ["educational"],
     instruction:
-      "A bit denser and more exact. Name mechanisms cleanly, then unpack them in plain speech. Fine to use a few precise terms if you gloss them once. Avoid hype and filler.",
+      "Technical and exact for a sharp undergrad peer. Name real mechanisms, tradeoffs, and failure modes. Use proper terms freely; only gloss the obscure ones. No baby talk, no hype, no 'for beginners' framing.",
   },
   {
     id: "accessible-smart",
     label: "Accessible · smart",
-    weight: 18,
+    weight: 12,
     prefer: [],
     instruction:
-      "Friendly but not chatty. Explain like a sharp peer — concrete examples, light wit if it fits, no baby talk and no TED polish.",
+      "Like explaining to a sharp classmate — concrete, a bit witty if it fits, never dumbed down. Prefer substance over vibes.",
+  },
+  {
+    id: "nuanced-clear",
+    label: "Nuanced · clear",
+    weight: 22,
+    prefer: [],
+    instruction:
+      "Thoughtful and precise. Layer tradeoffs or a non-obvious turn. Natural spoken rhythm — college-smart, not slangy and not lecture-stiff.",
   },
   {
     id: "reflective-layered",
@@ -99,7 +99,9 @@ export function pickVoiceStyle(params: {
 export function buildSystemPrompt(voice: VoiceStyle): string {
   return `You write short spoken scripts for daily speech practice.
 
-Baseline voice: nuanced and speakable — like a sharp person explaining something interesting out loud. Not TED-polished, not academic paper, not preachy, not slangy chat.
+Audience: undergraduate students at a strong STEM university. They have solid fundamentals. They want to LEARN something — not a tip for absolute beginners, and not a full industry deep-dive that assumes years on the job.
+
+Baseline voice: nuanced and speakable — like a sharp undergrad explaining something meaty to classmates out loud. Not TED-polished, not academic paper, not preachy, not slangy chat.
 
 Today's register (${voice.label}):
 ${voice.instruction}
@@ -116,9 +118,11 @@ Structure:
 
 Speakability:
 - Write ONLY the words to be spoken. No stage directions, labels, bullets, or markdown headings.
-- Prefer short-to-medium sentences. Complexity can live in the ideas, not in tangled grammar.
-- If you use a technical term, gloss it once in plain language.
+- Prefer short-to-medium sentences. Complexity lives in the ideas, not tangled grammar.
+- Use real technical terms when they help. Briefly gloss only jargon that a strong undergrad might not know yet — do not over-explain basics.
 - Target 350–450 words (about 2.5–3 minutes).
+
+For educational / technical topics: prioritize a specific non-obvious insight, current technique, or real tradeoff. Avoid "what is X" intros.
 
 Return a JSON object with keys title, topic, and script. The script value must be plain spoken text.`;
 }
@@ -154,7 +158,11 @@ Do NOT reuse:
 ${excluded}
 
 Invent one fresh topic angle, then write the full spoken script.
-
+${
+  category.id === "educational"
+    ? "\nAudience reminder: strong STEM undergrad. Teach a real technical insight — assume CS/math basics, skip intro fluff, don't require specialist industry experience.\n"
+    : ""
+}
 JSON fields:
 - title: short compelling title
 - topic: one-line description of the invented angle
@@ -182,11 +190,11 @@ User topic: ${customTopic}
 
 First, silently decide which lane this topic fits:
 
-A) Educational / technical / fintech / AI / ML / markets / science-of-X
-   → Find a timely, specific angle: new findings, current debates, mechanisms that matter now, or a non-obvious recent development. Teach one concrete idea — same energy as a sharp fintech/AI explain piece. Not a vague survey.
+A) Educational / technical / fintech / AI / ML / robotics / algorithms / markets / science
+   → Audience: undergrads at a strong STEM university, sharing this aloud with peers. Assume they know fundamentals. Teach a timely, specific angle — mechanism, tradeoff, current technique, or non-obvious finding. Do NOT shy away from technical depth. Do NOT write a beginner explainer or a vague survey. Do NOT assume 10 years of industry specialization.
 
 B) Everything else (interpersonal philosophy, culture, music, current events, craft, etc.)
-   → Find an interesting, non-obvious angle inside the topic. Dig past the surface take people already know.
+   → Same undergrad audience. Find an interesting, non-obvious angle. Dig past the surface take people already know. Keep it sharp enough that a thoughtful college classmate would learn something.
 
 Then write the spoken script for that angle.
 

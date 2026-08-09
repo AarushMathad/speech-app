@@ -126,7 +126,7 @@ export const CATEGORIES: Category[] = [
       "compute as a strategic resource",
     ],
     guidance:
-      "Invent one fresh, specific angle in tech / AI / ML / robotics / algorithms / systems / science / fintech / markets — what is popping or newly useful right now. Do NOT just rename a seed. Teach one concrete idea in ~3 minutes with a hook and 2–3 beats. Prefer timely, speakable angles over textbook surveys.",
+      "Invent one fresh, specific angle in tech / AI / ML / robotics / algorithms / systems / science / fintech / markets — timely and worth learning. Audience: strong STEM undergrad at a competitive university — comfortable with CS/math fundamentals, not a beginner, not a 10-year industry specialist. Teach something real: a mechanism, tradeoff, failure mode, or current technique. Skip 101 definitions and hand-wavy surveys. Still speakable in ~3 minutes — dense ideas, clear speech. Do NOT just rename a seed.",
   },
   {
     id: "reflective",
