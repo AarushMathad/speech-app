@@ -123,7 +123,8 @@ Speakability (this is a speech exercise first):
 - Sound like natural spoken English: complete clauses, clear referents, no telegram fragments.
 - When you quote a phrase, term, or title, keep both opening and closing quotation marks (or rephrase without quotes). Never leave a quote hanging.
 - Avoid awkward punctuation, run-ons, or half-edited sentences. It must read cleanly out loud on the first pass.
-- Target 350–450 words (about 2.5–3 minutes).
+- Hard upper limit: 370 words. Prefer about 350–370; shorter is fine if the idea lands cleanly. Never pad to fill time.
+- At ~140 wpm that is roughly 2.5 minutes — keep it tight for speech practice.
 
 For educational / technical topics: prioritize a specific non-obvious insight, current technique, or real tradeoff. Avoid "what is X" intros. Advanced ideas, conversational delivery.
 
@@ -160,7 +161,7 @@ ${seeds}
 Do NOT reuse:
 ${excluded}
 
-Invent one fresh topic angle, then write the full spoken script.
+Invent one fresh topic angle, then write the full spoken script (hard max 370 words).
 ${
   category.id === "educational"
     ? "\nAudience reminder: strong STEM undergrad. Teach a real technical insight — assume CS/math basics, skip intro fluff, don't require specialist industry experience.\n"
@@ -199,7 +200,7 @@ A) Educational / technical / fintech / AI / ML / robotics / algorithms / markets
 B) Everything else (interpersonal philosophy, culture, music, current events, craft, etc.)
    → Same undergrad audience. Find an interesting, non-obvious angle. Dig past the surface take people already know. Keep it sharp enough that a thoughtful college classmate would learn something.
 
-Then write the spoken script for that angle.
+Then write the spoken script for that angle. Hard max 370 words; shorter is fine.
 
 Do NOT reuse these angles:
 ${excluded}
