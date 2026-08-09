@@ -15,9 +15,9 @@ const sourceSerif = Source_Serif_4({
 });
 
 export const metadata: Metadata = {
-  title: "Speech practice",
+  title: "speech practice",
   description:
-    "A daily 2–3 minute script on live-generated topics for speaking out loud.",
+    "a daily 2–3 minute script on live-generated topics for speaking out loud.",
 };
 
 export default function RootLayout({

@@ -11,10 +11,10 @@ import type { ScriptPayload } from "@/lib/prompt";
 import { todayDateString } from "@/lib/topics";
 
 const CATEGORY_LABEL: Record<string, string> = {
-  educational: "Fintech · AI · ML",
-  reflective: "Mind · Relationships",
-  hobbies: "Hobbies · Culture",
-  custom: "Custom topic",
+  educational: "fintech · ai · ml",
+  reflective: "mind · relationships",
+  hobbies: "hobbies · culture",
+  custom: "custom topic",
 };
 
 async function fetchScript(params: {
@@ -37,7 +37,7 @@ async function fetchScript(params: {
 
   const data = (await res.json()) as ScriptPayload & { error?: string };
   if (!res.ok) {
-    throw new Error(data.error || "Failed to generate script");
+    throw new Error(data.error || "failed to generate script");
   }
   return data;
 }
@@ -89,7 +89,7 @@ export default function Home() {
       setAttempt(nextAttempt);
       persist(date, generated, nextHistory);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
+      setError(e instanceof Error ? e.message.toLowerCase() : "something went wrong");
     } finally {
       setLoading(false);
     }
@@ -99,7 +99,7 @@ export default function Home() {
     if (!date || loading) return;
     const topic = customTopic.trim();
     if (topic.length < 2) {
-      setError("Enter a topic first.");
+      setError("enter a topic first.");
       return;
     }
     try {
@@ -121,7 +121,7 @@ export default function Home() {
       setAttempt(0);
       persist(date, generated, nextHistory);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
+      setError(e instanceof Error ? e.message.toLowerCase() : "something went wrong");
     } finally {
       setLoading(false);
     }
@@ -167,54 +167,52 @@ export default function Home() {
   return (
     <>
       <div className="atmosphere" aria-hidden />
-      <main className="relative z-10 mx-auto flex min-h-full w-full max-w-3xl flex-col px-5 py-10 sm:px-8 sm:py-14">
-        <header className="fade-rise mb-10 text-center sm:mb-12">
-          <h1 className="text-4xl font-semibold tracking-tight text-[var(--text)] sm:text-5xl">
-            Speech practice
+      <main className="relative z-10 mx-auto flex min-h-full w-full max-w-2xl flex-col px-5 py-12 sm:px-6 sm:py-16">
+        <header className="fade-rise mb-12 text-left">
+          <h1 className="text-3xl font-medium tracking-tight text-[var(--text)] lowercase sm:text-4xl">
+            speech practice
           </h1>
-          <p className="mx-auto mt-3 max-w-lg text-sm text-[var(--text-muted)] sm:text-base">
-            A daily 2–3 minute script on live-generated topics — built for speaking
-            out loud.
+          <p className="mt-3 max-w-md text-sm leading-relaxed text-[var(--text-muted)] lowercase">
+            a daily 2–3 minute script on live-generated topics — built for
+            speaking out loud.
           </p>
           {date ? (
-            <p className="mt-4 text-xs tracking-wide text-[var(--text-muted)]">
-              {date}
-            </p>
+            <p className="mt-5 text-xs text-[var(--text-muted)]">{date}</p>
           ) : null}
         </header>
 
-        <section className="glass-panel glow-pulse fade-rise rounded-3xl p-6 sm:p-9">
+        <section className="glass-panel fade-rise rounded-2xl p-5 sm:p-7">
           {showChooser ? (
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-7">
               <div>
-                <h2 className="mb-4 text-lg font-semibold text-[var(--text)]">
-                  Today&apos;s script
+                <h2 className="mb-3 text-sm text-[var(--text-muted)] lowercase">
+                  today&apos;s script
                 </h2>
                 <button
                   type="button"
-                  className="neo-btn rounded-2xl px-5 py-3 text-sm font-medium"
+                  className="ui-btn rounded-xl px-4 py-2.5 text-sm lowercase"
                   onClick={() => generateDaily(0, [])}
                   disabled={loading}
                 >
-                  Generate today&apos;s script
+                  generate today&apos;s script
                 </button>
               </div>
 
-              <div className="flex items-center gap-3 text-xs tracking-[0.2em] text-[var(--text-muted)] uppercase">
+              <div className="flex items-center gap-3 text-xs text-[var(--text-muted)] lowercase">
                 <span className="h-px flex-1 bg-[var(--border)]" />
                 or
                 <span className="h-px flex-1 bg-[var(--border)]" />
               </div>
 
               <div>
-                <h2 className="mb-2 text-lg font-semibold text-[var(--text)]">
-                  Custom topic
+                <h2 className="mb-2 text-sm text-[var(--text-muted)] lowercase">
+                  custom topic
                 </h2>
-                <p className="mb-4 text-sm text-[var(--text-muted)]">
-                  Educational topics lean into current findings; everything else
+                <p className="mb-3 text-sm text-[var(--text-muted)] lowercase">
+                  educational topics lean into current findings; everything else
                   gets an interesting angle.
                 </p>
-                <div className="flex flex-col gap-3 sm:flex-row">
+                <div className="flex flex-col gap-2 sm:flex-row">
                   <input
                     type="text"
                     value={customTopic}
@@ -222,32 +220,34 @@ export default function Home() {
                     onKeyDown={(e) => {
                       if (e.key === "Enter") void generateCustom();
                     }}
-                    placeholder="e.g. AI agents in trading ops"
-                    className="neo-input min-w-0 flex-1 rounded-2xl px-4 py-3 text-sm"
+                    placeholder="e.g. ai agents in trading ops"
+                    className="ui-input min-w-0 flex-1 rounded-xl px-4 py-2.5 text-sm lowercase"
                     maxLength={240}
                   />
                   <button
                     type="button"
-                    className="neo-btn-ghost shrink-0 rounded-2xl px-5 py-3 text-sm font-medium"
+                    className="ui-btn-ghost shrink-0 rounded-xl px-4 py-2.5 text-sm lowercase"
                     onClick={() => void generateCustom()}
                     disabled={loading}
                   >
-                    Generate
+                    generate
                   </button>
                 </div>
               </div>
 
               {error ? (
-                <p className="text-sm text-[var(--purple-soft)]">{error}</p>
+                <p className="text-sm lowercase text-[var(--purple-soft)]">
+                  {error}
+                </p>
               ) : null}
             </div>
           ) : null}
 
           {loading && !script ? (
-            <div className="flex flex-col items-center gap-4 py-16">
-              <div className="h-10 w-10 animate-pulse rounded-full bg-[rgba(124,58,237,0.35)] shadow-[0_0_30px_var(--purple-glow)]" />
-              <p className="text-sm text-[var(--text-muted)]">
-                Writing script…
+            <div className="flex flex-col items-center gap-3 py-14">
+              <div className="h-2 w-2 animate-pulse rounded-full bg-[var(--purple-soft)]" />
+              <p className="text-sm lowercase text-[var(--text-muted)]">
+                writing script…
               </p>
             </div>
           ) : null}
@@ -255,57 +255,59 @@ export default function Home() {
           {script ? (
             <>
               <div className="mb-5 flex flex-wrap items-center gap-2">
-                <span className="neo-chip rounded-full px-3 py-1 text-xs font-medium tracking-wide">
+                <span className="ui-chip rounded-full px-2.5 py-0.5 text-xs">
                   {CATEGORY_LABEL[script.category] ?? script.category}
                 </span>
-                <span className="text-xs text-[var(--text-muted)]">
+                <span className="text-xs lowercase text-[var(--text-muted)]">
                   ~{script.estimatedMinutes} min · {script.wordCount} words
                 </span>
               </div>
 
-              <h2 className="mb-2 text-2xl font-semibold tracking-tight text-[var(--text)] sm:text-3xl">
+              <h2 className="mb-2 text-2xl font-medium tracking-tight text-[var(--text)] sm:text-[1.7rem]">
                 {script.title}
               </h2>
-              <p className="mb-7 text-sm text-[var(--purple-soft)]">
+              <p className="mb-6 text-sm text-[var(--purple-soft)]">
                 {script.topic}
               </p>
 
               <div className="script-body">{script.script}</div>
 
               {error ? (
-                <p className="mt-6 text-sm text-[var(--purple-soft)]">{error}</p>
+                <p className="mt-6 text-sm lowercase text-[var(--purple-soft)]">
+                  {error}
+                </p>
               ) : null}
 
-              <div className="mt-8 flex flex-wrap gap-3">
+              <div className="mt-8 flex flex-wrap gap-2">
                 <button
                   type="button"
-                  className="neo-btn rounded-2xl px-5 py-2.5 text-sm font-medium"
+                  className="ui-btn rounded-xl px-4 py-2 text-sm lowercase"
                   onClick={onCopy}
                   disabled={loading}
                 >
-                  {copied ? "Copied" : "Copy script"}
+                  {copied ? "copied" : "copy script"}
                 </button>
                 {!viewingRecent ? (
                   <button
                     type="button"
-                    className="neo-btn-ghost rounded-2xl px-5 py-2.5 text-sm font-medium"
+                    className="ui-btn-ghost rounded-xl px-4 py-2 text-sm lowercase"
                     onClick={() => void onAnotherTopic()}
                     disabled={loading}
                   >
                     {loading
-                      ? "Generating…"
+                      ? "generating…"
                       : mode === "custom"
-                        ? "Regenerate angle"
-                        : "Try another topic"}
+                        ? "regenerate angle"
+                        : "try another topic"}
                   </button>
                 ) : null}
                 <button
                   type="button"
-                  className="neo-btn-ghost rounded-2xl px-5 py-2.5 text-sm font-medium"
+                  className="ui-btn-ghost rounded-xl px-4 py-2 text-sm lowercase"
                   onClick={goHome}
                   disabled={loading}
                 >
-                  Home
+                  home
                 </button>
               </div>
             </>
@@ -314,8 +316,8 @@ export default function Home() {
 
         {showRecentList ? (
           <section className="fade-rise mt-10">
-            <h3 className="mb-4 text-xs font-medium tracking-[0.2em] text-[var(--text-muted)] uppercase">
-              Recent
+            <h3 className="mb-3 text-xs lowercase tracking-wide text-[var(--text-muted)]">
+              recent
             </h3>
             <ul className="space-y-2">
               {recent.map((item) => (
@@ -323,12 +325,10 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={() => openRecent(item)}
-                    className="w-full rounded-2xl border border-[var(--border)] bg-[rgba(12,10,18,0.45)] px-4 py-3 text-left backdrop-blur-md transition hover:border-[var(--border-purple)]"
+                    className="w-full rounded-xl border border-[var(--border)] bg-[rgba(12,10,18,0.35)] px-4 py-3 text-left transition hover:border-[var(--border-purple)]"
                   >
-                    <p className="text-sm font-medium text-[var(--text)]">
-                      {item.title}
-                    </p>
-                    <p className="mt-1 text-xs text-[var(--text-muted)]">
+                    <p className="text-sm text-[var(--text)]">{item.title}</p>
+                    <p className="mt-1 text-xs lowercase text-[var(--text-muted)]">
                       {item.date} ·{" "}
                       {CATEGORY_LABEL[item.category] ?? item.category}
                     </p>

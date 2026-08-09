@@ -1,19 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --bg-deep: #050508;
-  --bg-mid: #0b0b12;
+  --bg-deep: #07070a;
+  --bg-mid: #0c0c12;
   --purple: #7c3aed;
-  --purple-soft: #a78bfa;
-  --purple-glow: rgba(124, 58, 237, 0.45);
-  --glass: rgba(124, 58, 237, 0.08);
-  --glass-strong: rgba(18, 12, 28, 0.72);
-  --border: rgba(255, 255, 255, 0.12);
-  --border-purple: rgba(167, 139, 250, 0.28);
-  --text: #f3eefc;
-  --text-muted: rgba(243, 238, 252, 0.62);
-  --neo-light: rgba(167, 139, 250, 0.18);
-  --neo-dark: rgba(0, 0, 0, 0.65);
+  --purple-soft: #b5a0f0;
+  --border: rgba(255, 255, 255, 0.1);
+  --border-purple: rgba(167, 139, 250, 0.22);
+  --text: #eeeaf8;
+  --text-muted: rgba(238, 234, 248, 0.55);
   --font-display: var(--font-outfit), system-ui, sans-serif;
   --font-body: var(--font-source-serif), Georgia, serif;
 }
@@ -48,160 +43,92 @@ body {
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 80% 55% at 50% -10%, rgba(124, 58, 237, 0.38), transparent 55%),
-    radial-gradient(ellipse 50% 40% at 85% 70%, rgba(88, 28, 135, 0.28), transparent 50%),
-    radial-gradient(ellipse 40% 35% at 10% 80%, rgba(124, 58, 237, 0.15), transparent 45%),
+    radial-gradient(ellipse 70% 45% at 50% -5%, rgba(124, 58, 237, 0.22), transparent 60%),
     linear-gradient(180deg, var(--bg-mid) 0%, var(--bg-deep) 100%);
 }
 
-.atmosphere::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  opacity: 0.35;
-  mix-blend-mode: soft-light;
-}
-
 .glass-panel {
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.07) 0%,
-    var(--glass-strong) 40%,
-    rgba(124, 58, 237, 0.1) 100%
-  );
-  backdrop-filter: blur(22px) saturate(1.35);
-  -webkit-backdrop-filter: blur(22px) saturate(1.35);
-  border: 1px solid var(--border-purple);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
-    0 24px 60px rgba(0, 0, 0, 0.45),
-    0 0 80px rgba(124, 58, 237, 0.12);
+  background: rgba(16, 14, 24, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
 }
 
-.neo-btn {
-  background: linear-gradient(145deg, rgba(124, 58, 237, 0.35), rgba(30, 16, 48, 0.9));
+.ui-btn {
+  background: rgba(124, 58, 237, 0.28);
   border: 1px solid var(--border-purple);
   color: var(--text);
-  box-shadow:
-    6px 6px 16px var(--neo-dark),
-    -4px -4px 12px var(--neo-light),
-    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
-  transition:
-    transform 160ms ease,
-    box-shadow 160ms ease,
-    background 160ms ease;
+  transition: background 140ms ease, border-color 140ms ease;
 }
 
-.neo-btn:hover:not(:disabled) {
-  background: linear-gradient(145deg, rgba(124, 58, 237, 0.5), rgba(40, 20, 64, 0.95));
+.ui-btn:hover:not(:disabled) {
+  background: rgba(124, 58, 237, 0.4);
 }
 
-.neo-btn:active:not(:disabled) {
-  transform: translateY(1px);
-  box-shadow:
-    inset 4px 4px 10px var(--neo-dark),
-    inset -2px -2px 8px var(--neo-light);
-}
-
-.neo-btn:disabled {
-  opacity: 0.55;
+.ui-btn:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
-.neo-btn-ghost {
-  background: rgba(12, 10, 18, 0.55);
+.ui-btn-ghost {
+  background: transparent;
   border: 1px solid var(--border);
-  color: var(--text);
-  box-shadow:
-    5px 5px 14px var(--neo-dark),
-    -3px -3px 10px rgba(167, 139, 250, 0.1);
-  transition:
-    transform 160ms ease,
-    box-shadow 160ms ease;
+  color: var(--text-muted);
+  transition: border-color 140ms ease, color 140ms ease;
 }
 
-.neo-btn-ghost:hover:not(:disabled) {
+.ui-btn-ghost:hover:not(:disabled) {
   border-color: var(--border-purple);
+  color: var(--text);
 }
 
-.neo-btn-ghost:active:not(:disabled) {
-  transform: translateY(1px);
-  box-shadow:
-    inset 3px 3px 8px var(--neo-dark),
-    inset -2px -2px 6px rgba(167, 139, 250, 0.12);
+.ui-btn-ghost:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-.neo-input {
-  background: rgba(12, 10, 18, 0.55);
+.ui-input {
+  background: rgba(8, 8, 12, 0.5);
   border: 1px solid var(--border);
   color: var(--text);
-  box-shadow:
-    inset 3px 3px 8px rgba(0, 0, 0, 0.35),
-    inset -1px -1px 4px rgba(167, 139, 250, 0.08);
   outline: none;
 }
 
-.neo-input::placeholder {
-  color: rgba(243, 238, 252, 0.35);
+.ui-input::placeholder {
+  color: rgba(238, 234, 248, 0.3);
+  text-transform: lowercase;
 }
 
-.neo-input:focus {
+.ui-input:focus {
   border-color: var(--border-purple);
-  box-shadow:
-    inset 3px 3px 8px rgba(0, 0, 0, 0.35),
-    0 0 0 1px rgba(124, 58, 237, 0.35);
 }
 
-.neo-chip {
-  background: rgba(124, 58, 237, 0.18);
-  border: 1px solid var(--border-purple);
-  color: var(--purple-soft);
-  box-shadow:
-    3px 3px 8px rgba(0, 0, 0, 0.4),
-    -2px -2px 6px rgba(167, 139, 250, 0.12),
-    0 0 20px rgba(124, 58, 237, 0.15);
+.ui-chip {
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  text-transform: lowercase;
 }
 
 .script-body {
   font-family: var(--font-body);
-  font-size: clamp(1.05rem, 0.95rem + 0.4vw, 1.2rem);
+  font-size: clamp(1.05rem, 0.95rem + 0.35vw, 1.18rem);
   line-height: 1.75;
-  color: rgba(243, 238, 252, 0.92);
+  color: rgba(238, 234, 248, 0.92);
   white-space: pre-wrap;
+  text-transform: none;
 }
 
 .fade-rise {
-  animation: fadeRise 0.7s ease both;
+  animation: fadeRise 0.45s ease both;
 }
 
 @keyframes fadeRise {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-.glow-pulse {
-  animation: glowPulse 4.5s ease-in-out infinite;
-}
-
-@keyframes glowPulse {
-  0%,
-  100% {
-    box-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.04) inset,
-      0 24px 60px rgba(0, 0, 0, 0.45),
-      0 0 60px rgba(124, 58, 237, 0.1);
-  }
-  50% {
-    box-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.06) inset,
-      0 24px 60px rgba(0, 0, 0, 0.45),
-      0 0 90px rgba(124, 58, 237, 0.22);
   }
 }
