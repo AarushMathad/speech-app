@@ -184,13 +184,10 @@ export default function Home() {
         <section className="glass-panel fade-rise rounded-2xl p-6 sm:p-9">
           {showChooser ? (
             <div className="flex flex-col gap-8">
-              <div>
-                <h2 className="mb-4 text-base text-[var(--text-muted)] lowercase">
-                  today&apos;s script
-                </h2>
+              <div className="flex justify-center">
                 <button
                   type="button"
-                  className="ui-btn rounded-xl px-5 py-3 text-base lowercase"
+                  className="ui-btn rounded-xl px-6 py-3 text-base lowercase"
                   onClick={() => generateDaily(0, [])}
                   disabled={loading}
                 >
