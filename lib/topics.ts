@@ -17,7 +17,7 @@ export const CATEGORIES: Category[] = [
   {
     id: "educational",
     label: "Tech · AI · Science · Markets",
-    weight: 45,
+    weight: 65,
     seeds: [
       // Agents & systems
       "AI agents and tool use",
@@ -126,12 +126,12 @@ export const CATEGORIES: Category[] = [
       "compute as a strategic resource",
     ],
     guidance:
-      "Invent one fresh, specific angle in tech / AI / ML / robotics / algorithms / systems / science / fintech / markets — timely and worth learning. Audience: strong STEM undergrad at a competitive university — comfortable with CS/math fundamentals, not a beginner, not a 10-year industry specialist. Teach something real: a mechanism, tradeoff, failure mode, or current technique. Skip 101 definitions and hand-wavy surveys. Still speakable in ~3 minutes — dense ideas, clear speech. Do NOT just rename a seed.",
+      "Invent one fresh, specific angle in tech / AI / ML / robotics / algorithms / systems / science / fintech / markets — timely and worth learning. Audience: strong STEM undergrad at a competitive university — comfortable with CS/math fundamentals, not a beginner, not a 10-year industry specialist. Teach something real: a mechanism, tradeoff, failure mode, or current technique. Keep the IDEAS advanced, but the spoken delivery light and easy to say — short clauses, not dense lecture sentences. Skip 101 definitions and hand-wavy surveys. Do NOT just rename a seed.",
   },
   {
     id: "reflective",
     label: "Mind · Philosophy · People",
-    weight: 30,
+    weight: 20,
     seeds: [
       // Mind & attention
       "attention and distraction",
@@ -191,7 +191,7 @@ export const CATEGORIES: Category[] = [
   {
     id: "hobbies",
     label: "Culture · Music · Events",
-    weight: 25,
+    weight: 15,
     seeds: [
       // Popular music (general)
       "how pop songs are structured",

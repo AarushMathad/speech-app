@@ -31,15 +31,15 @@ export const VOICE_STYLES: VoiceStyle[] = [
     weight: 30,
     prefer: ["educational"],
     instruction:
-      "Technical and exact for a sharp undergrad peer. Name real mechanisms, tradeoffs, and failure modes. Use proper terms freely; only gloss the obscure ones. No baby talk, no hype, no 'for beginners' framing.",
+      "Advanced ideas, easy mouthfeel. Name real mechanisms and tradeoffs, but say them in short, conversational clauses a classmate would actually speak. Prefer vivid concrete wording over stacked abstract nouns. No baby talk, no hype, no beginner framing.",
   },
   {
     id: "accessible-smart",
     label: "Accessible · smart",
-    weight: 12,
+    weight: 16,
     prefer: [],
     instruction:
-      "Like explaining to a sharp classmate — concrete, a bit witty if it fits, never dumbed down. Prefer substance over vibes.",
+      "Like explaining to a sharp classmate — concrete, lightly conversational, never dumbed down. Prefer substance over vibes, and keep sentences easy to say aloud.",
   },
   {
     id: "nuanced-clear",
@@ -47,7 +47,7 @@ export const VOICE_STYLES: VoiceStyle[] = [
     weight: 22,
     prefer: [],
     instruction:
-      "Thoughtful and precise. Layer tradeoffs or a non-obvious turn. Natural spoken rhythm — college-smart, not slangy and not lecture-stiff.",
+      "Thoughtful and precise, slightly conversational. Layer one tradeoff or non-obvious turn. College-smart, not slangy, not lecture-stiff, not wordy.",
   },
   {
     id: "reflective-layered",
@@ -101,7 +101,7 @@ export function buildSystemPrompt(voice: VoiceStyle): string {
 
 Audience: undergraduate students at a strong STEM university. They have solid fundamentals. They want to LEARN something — not a tip for absolute beginners, and not a full industry deep-dive that assumes years on the job.
 
-Baseline voice: nuanced and speakable — like a sharp undergrad explaining something meaty to classmates out loud. Not TED-polished, not academic paper, not preachy, not slangy chat.
+Baseline voice: a sharp undergrad talking to classmates — substantive, slightly conversational, easy to say out loud. Not TED-polished, not academic paper, not preachy, not slangy chat. Ideas can be hard; sentences should stay light.
 
 Today's register (${voice.label}):
 ${voice.instruction}
@@ -116,16 +116,16 @@ Structure:
 2. Two or three clear beats — mechanisms, examples, tradeoffs, or turns.
 3. A close with a real takeaway or open question — not a corporate summary.
 
-Speakability:
+Speakability (this is a speech exercise first):
 - Write ONLY the words to be spoken. No stage directions, labels, bullets, or markdown headings.
-- Prefer short-to-medium sentences. Complexity lives in the ideas, not tangled grammar.
+- Keep content difficulty; reduce verbal density. Prefer short-to-medium sentences and everyday connective speech ("so", "the trick is", "what that means is").
+- Avoid stacked jargon, nested clauses, and tongue-twisters. If a term is precise, use it — then say what it means in one clean follow-up.
 - Sound like natural spoken English: complete clauses, clear referents, no telegram fragments.
-- When you quote a phrase, term, or title, keep both opening and closing quotation marks in the spoken text (or rephrase without quotes). Never leave a quote hanging.
-- Avoid awkward punctuation, run-ons, or half-edited sentences. The script must read cleanly out loud on the first pass.
-- Use real technical terms when they help. Briefly gloss only jargon that a strong undergrad might not know yet — do not over-explain basics.
+- When you quote a phrase, term, or title, keep both opening and closing quotation marks (or rephrase without quotes). Never leave a quote hanging.
+- Avoid awkward punctuation, run-ons, or half-edited sentences. It must read cleanly out loud on the first pass.
 - Target 350–450 words (about 2.5–3 minutes).
 
-For educational / technical topics: prioritize a specific non-obvious insight, current technique, or real tradeoff. Avoid "what is X" intros.
+For educational / technical topics: prioritize a specific non-obvious insight, current technique, or real tradeoff. Avoid "what is X" intros. Advanced ideas, conversational delivery.
 
 Return a JSON object with keys title, topic, and script. The script value must be plain spoken text with correct grammar and punctuation.`;
 }
