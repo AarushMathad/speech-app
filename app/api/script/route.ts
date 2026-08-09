@@ -8,7 +8,7 @@ import {
   parseScriptJson,
   type ScriptPayload,
 } from "@/lib/prompt";
-import { pickCategory } from "@/lib/topics";
+import { pickCategory, sampleSeedHints } from "@/lib/topics";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -86,6 +86,7 @@ export async function POST(req: Request) {
       : excludeTopics.length;
 
   const category = pickCategory(date, attempt);
+  const seedHints = sampleSeedHints(category, date, attempt);
   const modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash";
 
   const client = new GoogleGenerativeAI(apiKey);
@@ -115,6 +116,7 @@ export async function POST(req: Request) {
         date,
         excludeTopics,
         attempt,
+        seedHints,
       }),
     );
     const text = result.response.text();

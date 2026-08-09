@@ -29,7 +29,9 @@ Speakability rules:
 - Prefer short-to-medium sentences. Avoid tongue-twisters and dense jargon; if you use a technical term, gloss it in plain language once.
 - Target 350–450 words (about 2.5–3 minutes at a natural pace).
 
-For educational topics: teach something current and specific — what is popping now — not a vague survey. One idea, clearly spoken.
+For educational topics: teach something current and specific — invent a timely angle — not a vague survey. One idea, clearly spoken.
+
+Topic selection: invent the topic dynamically. Inspiration hints are not a multiple-choice list.
 
 Return a JSON object with keys title, topic, and script. The script value must be plain spoken text.`;
 }
@@ -39,9 +41,10 @@ export function buildUserPrompt(params: {
   date: string;
   excludeTopics: string[];
   attempt: number;
+  seedHints: string[];
 }): string {
-  const { category, date, excludeTopics, attempt } = params;
-  const seeds = category.seeds.map((s) => `- ${s}`).join("\n");
+  const { category, date, excludeTopics, attempt, seedHints } = params;
+  const seeds = seedHints.map((s) => `- ${s}`).join("\n");
   const excluded =
     excludeTopics.length > 0
       ? excludeTopics.map((t) => `- ${t}`).join("\n")
@@ -49,22 +52,22 @@ export function buildUserPrompt(params: {
 
   return `Date: ${date}
 Category: ${category.label} (${category.id})
-Attempt: ${attempt} (use this to vary the angle if regenerating)
+Attempt: ${attempt} (use this to invent a different angle if regenerating)
 
 Category guidance:
 ${category.guidance}
 
-Interest seeds (compass only — branch into adjacent or more timely angles; do NOT just pick a seed verbatim as the whole topic):
+Inspiration hints (NOT a menu — do not pick one and stop. Invent a new, specific spoken topic in this realm that could sit beside these ideas. Branch out; stay inside the category's world):
 ${seeds}
 
 Do NOT reuse any of these topics/angles:
 ${excluded}
 
-Propose one fresh, specific angle for this category, then write the full spoken script for it.
+Invent one fresh topic angle, then write the full spoken script for it.
 
 JSON fields:
 - title: short, compelling title for the practice
-- topic: one-line description of the specific angle (used for exclusion later)
+- topic: one-line description of the specific invented angle (used for exclusion later)
 - script: the full spoken text only`;
 }
 
